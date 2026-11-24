@@ -1,0 +1,156 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+
+public class AplikasiStokMasakan extends JFrame {
+
+    private JTable tabelStok;
+    private DefaultTableModel modelTabel;
+    private JLabel labelStatus;
+
+    public AplikasiStokMasakan() {
+        // 1. Pengaturan Dasar Jendela Utama
+        setTitle("Aplikasi Manajemen Stok Masakan");
+        setSize(850, 480);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); // Agar muncul di tengah layar
+        
+        // Menggunakan BorderLayout dengan jarak antar komponen 5px
+        setLayout(new BorderLayout(5, 5));
+
+        // ==========================================
+        // 2. BAGIAN NORTH (ATAS) - Header & Search
+        // ==========================================
+        JPanel panelNorth = new JPanel(new BorderLayout());
+        panelNorth.setBackground(new Color(46, 204, 113)); // Warna Hijau Mint
+        panelNorth.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+
+        JLabel labelJudul = new JLabel("MANAJEMEN STOK MASAKAN RUMAH");
+        labelJudul.setFont(new Font("SansSerif", Font.BOLD, 16));
+        labelJudul.setForeground(Color.WHITE);
+
+        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        panelSearch.setOpaque(false);
+        JTextField txtCari = new JTextField(15);
+        JButton btnCari = new JButton("Cari");
+        panelSearch.add(new JLabel("Cari Bahan: "));
+        panelSearch.add(txtCari);
+        panelSearch.add(btnCari);
+
+        panelNorth.add(labelJudul, BorderLayout.WEST);
+        panelNorth.add(panelSearch, BorderLayout.EAST);
+        add(panelNorth, BorderLayout.NORTH);
+
+        // ==========================================
+        // 3. BAGIAN WEST (KIRI) - Panel Kategori
+        // ==========================================
+        JPanel panelWest = new JPanel();
+        panelWest.setLayout(new BoxLayout(panelWest, BoxLayout.Y_AXIS));
+        panelWest.setBorder(BorderFactory.createTitledBorder("Kategori"));
+        panelWest.setPreferredSize(new Dimension(130, 0));
+
+        String[] kategori = {"Semua", "Sayuran", "Bumbu", "Daging", "Lainnya"};
+        for (String kat : kategori) {
+            JButton btnKat = new JButton(kat);
+            btnKat.setMaximumSize(new Dimension(115, 30));
+            btnKat.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panelWest.add(btnKat);
+            panelWest.add(Box.createRigidArea(new Dimension(0, 8))); // Jarak antar tombol
+        }
+        add(panelWest, BorderLayout.WEST);
+
+        // ==========================================
+        // 4. BAGIAN CENTER (TENGAH) - Tabel Stok
+        // ==========================================
+        String[] kolom = {"ID", "Nama Bahan", "Jumlah", "Satuan", "Kadaluarsa"};
+        modelTabel = new DefaultTableModel(kolom, 0);
+        
+        // Menambahkan data contoh awal
+        modelTabel.addRow(new Object[]{"B001", "Bawang Merah", "500", "gram", "2026-11-20"});
+        modelTabel.addRow(new Object[]{"B002", "Minyak Goreng", "2", "liter", "2027-05-10"});
+        modelTabel.addRow(new Object[]{"B003", "Dada Ayam", "1", "kg", "2026-11-15"});
+        modelTabel.addRow(new Object[]{"B004", "Tomat Merah", "8", "buah", "2026-11-16"});
+
+        tabelStok = new JTable(modelTabel);
+        tabelStok.setRowHeight(25);
+        JScrollPane scrollPane = new JScrollPane(tabelStok);
+        add(scrollPane, BorderLayout.CENTER);
+
+        // ==========================================
+        // 5. BAGIAN EAST (KANAN) - Panel Tombol Aksi
+        // ==========================================
+        JPanel panelEast = new JPanel();
+        panelEast.setLayout(new BoxLayout(panelEast, BoxLayout.Y_AXIS));
+        panelEast.setBorder(BorderFactory.createTitledBorder("Aksi"));
+        panelEast.setPreferredSize(new Dimension(140, 0));
+
+        JButton btnTambah = new JButton("+ Tambah Data");
+        JButton btnEdit = new JButton("Edit Stok");
+        JButton btnHapus = new JButton("Hapus Item");
+        JButton btnRefresh = new JButton("Refresh");
+
+        JButton[] tombolAksi = {btnTambah, btnEdit, btnHapus, btnRefresh};
+        for (JButton btn : tombolAksi) {
+            btn.setMaximumSize(new Dimension(125, 35));
+            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panelEast.add(btn);
+            panelEast.add(Box.createRigidArea(new Dimension(0, 10)));
+        }
+        add(panelEast, BorderLayout.EAST);
+
+        // ==========================================
+        // 6. BAGIAN SOUTH (BAWAH) - Status Bar
+        // ==========================================
+        JPanel panelSouth = new JPanel(new BorderLayout());
+        panelSouth.setBorder(BorderFactory.createEtchedBorder());
+        labelStatus = new JLabel(" Status: 4 jenis bahan ditampilkan | Peringatan: Dada Ayam hampir kadaluarsa");
+        labelStatus.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        panelSouth.add(labelStatus, BorderLayout.WEST);
+        add(panelSouth, BorderLayout.SOUTH);
+
+        // ==========================================
+        // 7. LOGIKA SEDERHANA UNTUK TOMBOL
+        // ==========================================
+        // Aksi Tombol Tambah
+        btnTambah.addActionListener(e -> {
+            String id = JOptionPane.showInputDialog(this, "Masukkan ID Bahan (cth: B005):");
+            if (id != null && !id.trim().isEmpty()) {
+                String nama = JOptionPane.showInputDialog(this, "Nama Bahan:");
+                String jumlah = JOptionPane.showInputDialog(this, "Jumlah:");
+                String satuan = JOptionPane.showInputDialog(this, "Satuan (kg/gram/liter/buah):");
+                String exp = JOptionPane.showInputDialog(this, "Tanggal Kadaluarsa (YYYY-MM-DD):");
+                
+                modelTabel.addRow(new Object[]{id, nama, jumlah, satuan, exp});
+                updateStatus();
+            }
+        });
+
+        // Aksi Tombol Hapus
+        btnHapus.addActionListener(e -> {
+            int barisTerpilih = tabelStok.getSelectedRow();
+            if (barisTerpilih != -1) {
+                modelTabel.removeRow(barisTerpilih);
+                updateStatus();
+            } else {
+                JOptionPane.showMessageDialog(this, "Pilih baris pada tabel yang ingin dihapus terlebih dahulu!");
+            }
+        });
+    }
+
+    // Method untuk memperbarui teks status di bagian bawah
+    private void updateStatus() {
+        int total = modelTabel.getRowCount();
+        labelStatus.setText(" Status: " + total + " jenis bahan ditampilkan.");
+    }
+
+    public static void main(String[] args) {
+        // Menjalankan GUI dengan tampilan modern sesuai OS (Windows/Mac/Linux)
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignored) {}
+
+        SwingUtilities.invokeLater(() -> {
+            new AplikasiStokMasakan().setVisible(true);
+        });
+    }
+}
