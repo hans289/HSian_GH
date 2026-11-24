@@ -25,7 +25,7 @@ public class AplikasiStokMasakan extends JFrame {
         panelNorth.setBackground(new Color(46, 204, 113)); // Warna Hijau Mint
         panelNorth.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
 
-        JLabel labelJudul = new JLabel("MANAJEMEN STOK MASAKAN RUMAH");
+        JLabel labelJudul = new JLabel("MANAJEMEN STOK MASAKAN DAPUR");
         labelJudul.setFont(new Font("SansSerif", Font.BOLD, 16));
         labelJudul.setForeground(Color.WHITE);
 
